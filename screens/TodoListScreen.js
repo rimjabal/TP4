@@ -1,35 +1,19 @@
-import React, { useState, useEffect } from "react";
-import { View, Text, FlatList, TouchableOpacity, ActivityIndicator, StyleSheet } from "react-native";
-import AppBar from "../components/AppBar"; // Import du composant AppBar
+import React, { useEffect } from "react";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import AppBar from "../components/AppBar";
+import { useTodoStore } from "../store/useTodoStore";
 
 export default function TodoListScreen({ navigation }) {
-  const [todos, setTodos] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { todos, addTodo } = useTodoStore();
 
   useEffect(() => {
-    console.log("Chargement des tâches...");
-    setTimeout(() => {
-      setTodos([
-        { id: 1, title: "Faire les courses" },
-        { id: 2, title: "Sortir le chien" },
-        { id: 3, title: "Coder une app RN" },
-      ]);
-      setLoading(false);
-    }, 1000);
+    addTodo({ id: 1, title: "Faire les courses" });
+    addTodo({ id: 2, title: "Sortir le chien" });
+    addTodo({ id: 3, title: "Coder une app RN" });
   }, []);
-
-  if (loading) {
-    return (
-      <View style={styles.center}>
-        <Text style={{ fontSize: 20 }}>Chargement...</Text>
-        <ActivityIndicator size="large" color="#007AFF" />
-      </View>
-    );
-  }
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Intégration de l'AppBar avec le titre demandé */}
       <AppBar title="Mes tâches" />
       
       <View style={styles.content}>
@@ -39,7 +23,7 @@ export default function TodoListScreen({ navigation }) {
           renderItem={({ item }) => (
             <TouchableOpacity
               style={styles.item}
-              onPress={() => navigation.navigate("Details", { id: item.id, title: item.title })}
+              onPress={() => navigation.navigate("Détails", item)}
             >
               <Text style={styles.itemText}>{item.title}</Text>
             </TouchableOpacity>
