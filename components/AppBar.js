@@ -1,13 +1,20 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, Button, SafeAreaView } from 'react-native'; // Ajout de SafeAreaView si besoin, ou gestion via parent
+import { View, Text, StyleSheet, Button, TouchableOpacity } from 'react-native';
 import { AuthContext } from '../context/AuthContext';
+import { useNavigation } from '@react-navigation/native';
 
-export default function AppBar({ title }) {
+export default function AppBar({ title, back }) {
   const { logout } = useContext(AuthContext);
+  const navigation = useNavigation();
 
   return (
     <View style={styles.headerContainer}>
         <View style={styles.appBar}>
+          {back && (
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
+              <Text style={styles.backText}>← Retour</Text>
+            </TouchableOpacity>
+          )}
           <Text style={styles.title}>{title}</Text>
           <Button title="Logout" onPress={logout} color="#ff5c5c" />
         </View>
@@ -27,9 +34,18 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 15,
   },
+  backButton: {
+    paddingRight: 10,
+  },
+  backText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '600',
+  },
   title: {
     color: '#fff',
     fontSize: 20,
     fontWeight: 'bold',
+    flex: 1,
   },
 });

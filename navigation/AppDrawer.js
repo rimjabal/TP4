@@ -1,16 +1,42 @@
 import React from "react";
-import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import AppStack from "./AppStack";
+import NativeStack from "./NativeStack";
 import ProfileScreen from "../screens/ProfileScreen";
 
-const Drawer = createDrawerNavigator();
+const Tab = createBottomTabNavigator();
 
 export default function AppDrawer() {
   return (
-    <Drawer.Navigator>
-        {/* On cache le header du Drawer pour laisser la main au Stack ou à l'AppBar */}
-      <Drawer.Screen name="Tâches" component={AppStack} options={{ headerShown: false }} />
-      <Drawer.Screen name="Profil" component={ProfileScreen} />
-    </Drawer.Navigator>
+    <Tab.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
+      <Tab.Screen 
+        name="Tâches" 
+        component={AppStack}
+        options={{
+          tabBarLabel: "Tâches",
+          tabBarIcon: () => "📝",
+        }}
+      />
+      <Tab.Screen 
+        name="Fonctionnalités natives" 
+        component={NativeStack}
+        options={{
+          tabBarLabel: "Natif",
+          tabBarIcon: () => "📱",
+        }}
+      />
+      <Tab.Screen 
+        name="Profil" 
+        component={ProfileScreen}
+        options={{
+          tabBarLabel: "Profil",
+          tabBarIcon: () => "👤",
+        }}
+      />
+    </Tab.Navigator>
   );
 }

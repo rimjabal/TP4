@@ -1,55 +1,48 @@
-import { useEffect, useState, useContext } from "react";
+import { useContext } from "react";
 import { View, StyleSheet, ActivityIndicator } from "react-native";
-import { initDB } from "./services/database";
+import { NavigationContainer } from "@react-navigation/native";
+import { Provider } from "react-redux";
+import { store } from "./store/store";
 import { ThemeProvider, ThemeContext } from "./context/ThemeContext";
-import TodoListOfflineScreen from "./screens/TodoListOfflineScreen";
+import { AuthProvider, AuthContext } from "./context/AuthContext";
+import AppDrawer from "./navigation/AppDrawer";
+import LoginScreen from "./screens/LoginScreen";
 
 function MainApp() {
   const { theme } = useContext(ThemeContext);
-  
+  const { user, loading } = useContext(AuthContext);
+
+  if (loading) {
+    return (
+      <View style={styles.loadingContainer}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
   return (
-    <View
-      style={[
-        styles.container,
-        theme === "dark" ? styles.dark : styles.light,
-      ]}
-    >
-      <TodoListOfflineScreen />
-    </View>
+    <NavigationContainer>
+      {user ? <AppDrawer /> : <LoginScreen />}
+    </NavigationContainer>
   );
 }
 
 export default function App() {
-  const [dbReady, setDbReady] = useState(false);
-
-  useEffect(() => {
-    const prepareDb = async () => {
-      await initDB(); // attendre SQLite
-      setDbReady(true); // OK pour afficher l'app
-    };
-    prepareDb();
-  }, []);
-
-  if (!dbReady) {
-    return <ActivityIndicator size="large" />;
-  }
-
   return (
-    <ThemeProvider>
-      <MainApp />
-    </ThemeProvider>
+    <Provider store={store}>
+      <ThemeProvider>
+        <AuthProvider>
+          <MainApp />
+        </AuthProvider>
+      </ThemeProvider>
+    </Provider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loadingContainer: {
     flex: 1,
-    paddingTop: 40,
-  },
-  light: {
-    backgroundColor: "#ffffff",
-  },
-  dark: {
-    backgroundColor: "#121212",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
